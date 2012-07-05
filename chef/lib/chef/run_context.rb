@@ -35,7 +35,7 @@ class Chef
 
     # Needs to be settable so deploy can run a resource_collection independent
     # of any cookbooks.
-    attr_accessor :resource_collection
+    attr_accessor :resource_collection, :immediate_notification_collection, :delayed_notification_collection
 
     # Creates a new Chef::RunContext object and populates its fields. This object gets
     # used by the Chef Server to generate a fully compiled recipe list for a node.
@@ -46,6 +46,8 @@ class Chef
       @node = node
       @cookbook_collection = cookbook_collection
       @resource_collection = Chef::ResourceCollection.new
+      @immediate_notification_collection = Hash.new {|h,k| h[k] = []}
+      @delayed_notification_collection = Hash.new {|h,k| h[k] = []}
       @definitions = Hash.new
 
       # TODO: 5/18/2010 cw/timh - See note on Chef::Node's
@@ -73,6 +75,40 @@ class Chef
       end
     end
 
+
+    def notifies_immediately(notification)
+      nr = notification.notifying_resource
+      if nr.instance_of?(Chef::Resource)
+        @immediate_notification_collection[nr.name] << notification
+      else
+        @immediate_notification_collection[nr.to_s] << notification
+      end
+    end
+
+    def notifies_delayed(notification)
+      nr = notification.notifying_resource
+      if nr.instance_of?(Chef::Resource)
+        @delayed_notification_collection[nr.name] << notification
+      else
+        @delayed_notification_collection[nr.to_s] << notification
+      end
+    end
+
+    def immediate_notifications(resource)
+      if resource.instance_of?(Chef::Resource)
+        return @immediate_notification_collection[resource.name]
+      else
+        return @immediate_notification_collection[resource.to_s]
+      end
+    end
+
+    def delayed_notifications(resource)
+      if resource.instance_of?(Chef::Resource)
+        return @delayed_notification_collection[resource.name]
+      else
+        return @delayed_notification_collection[resource.to_s]
+      end
+    end
 
     private
 
