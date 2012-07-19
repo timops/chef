@@ -57,9 +57,10 @@ describe Chef::Provider::Group::Gpasswd, "modify_group_members" do
       @provider.current_resource = @new_resource
     end
 
-    describe "when no group members are specified and append is not set" do
+    describe "when no group members are specified and both append and delete are not set" do
       before do
         @new_resource.append(false)
+        @new_resource.delete(false)
         @new_resource.members([])
       end
 
