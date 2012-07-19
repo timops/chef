@@ -56,7 +56,7 @@ class Chef
                   shell_out!("gpasswd -d #{member} #{@new_resource.group_name}")
                 end
               else
-                  Chef::Log.debug("#{@new_resource} not changing group members, the group has no members to add")
+                  Chef::Log.debug("#{@new_resource} not changing group members, the group has no members to delete")
               end
             else
               unless @new_resource.members.empty?
