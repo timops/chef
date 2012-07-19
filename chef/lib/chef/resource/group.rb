@@ -28,6 +28,7 @@ class Chef
         @members = []
         @action = :create
         @append = false
+        @delete = false
         @allowed_actions.push(:create, :remove, :modify, :manage)
       end
       
@@ -61,6 +62,14 @@ class Chef
       def append(arg=nil)
         set_or_return(
           :append,
+          arg,
+          :kind_of => [ TrueClass, FalseClass ]
+        )
+      end
+
+      def delete(arg=nil)
+        set_or_return(
+          :delete,
           arg,
           :kind_of => [ TrueClass, FalseClass ]
         )

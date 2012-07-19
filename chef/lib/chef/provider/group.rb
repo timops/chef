@@ -89,6 +89,16 @@ class Chef
             @change_desc = "add missing member(s): #{missing_members.join(", ")}"
             return true
           end
+        elsif(@new_resource.delete)
+          delete_members = []
+          @new_resource.members.each do |member|
+            next if ! @current_resource.members.include?(member)
+            delete_members << member
+          end
+          if delete_members.length > 0
+            @change_desc = "delete member(s): #{delete_members.join(", ")}"
+            return true
+          end
         else
           if @new_resource.members != @current_resource.members
             @change_desc = "replace group members with new list of members"
