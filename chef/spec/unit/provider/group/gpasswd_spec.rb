@@ -86,7 +86,7 @@ describe Chef::Provider::Group::Gpasswd, "modify_group_members" do
 
     describe "when no group members are specified and delete is set" do
       before do
-        @new_resource.delete(false)
+        @new_resource.delete(true)
         @new_resource.members([])
       end
       it "logs a message and does not modify group membership" do
@@ -96,10 +96,10 @@ describe Chef::Provider::Group::Gpasswd, "modify_group_members" do
       end
     end
 
-    describe "when group members are specified and delete is set" do
+    describe "when a group member is specified and delete is set" do
       before do
         @new_resource.delete(true)
-        @new_resource.members([%w{lobster}])
+        @new_resource.members('lobster')
       end
 
       it "should log an appropriate debug message" do
@@ -109,7 +109,7 @@ describe Chef::Provider::Group::Gpasswd, "modify_group_members" do
       end
 
       it "should run gpasswd with the member to delete" do
-        @provider.should_recieve(:shell_out!).with("gpasswd -d lobster wheel")
+        @provider.should_receive(:shell_out!).with("gpasswd -d lobster wheel")
         @provider.modify_group_members
       end
     end
